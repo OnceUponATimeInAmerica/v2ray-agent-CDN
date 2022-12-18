@@ -1222,7 +1222,7 @@ acmeInstallSSL() {
 		txtValue=$(tail -n 10 /etc/v2ray-agent/tls/acme.log | grep "TXT value" | awk -F "'" '{print $2}')
 		if [[ -n "${txtValue}" ]]; then
 			echoContent green " ---> 请手动添加DNS TXT记录"
-			echoContent yellow " ---> 添加方法请参考此教程，https://github.com/mack-a/v2ray-agent/blob/master/documents/dns_txt.md"
+			echoContent yellow " ---> 添加方法请参考此教程，https://github.com/OnceUponATimeInAmerica/v2ray-agent-CDN/blob/master/documents/dns_txt.md"
 			echoContent yellow " ---> 如同一个域名多台机器安装通配符证书，请添加多个TXT记录，不需要修改以前添加的TXT记录"
 			echoContent green " --->  name：_acme-challenge"
 			echoContent green " --->  value：${txtValue}"
@@ -1420,7 +1420,7 @@ nginxBlog() {
 		if [[ "${nginxBlogInstallStatus}" == "y" ]]; then
 			rm -rf /usr/share/nginx/html
 			randomNum=$((RANDOM % 6 + 1))
-			wget -q -P /usr/share/nginx https://raw.githubusercontent.com/mack-a/v2ray-agent/master/fodder/blog/unable/html${randomNum}.zip >/dev/null
+			wget -q -P /usr/share/nginx https://raw.githubusercontent.com/OnceUponATimeInAmerica/v2ray-agent-CDN/master/fodder/blog/unable/html${randomNum}.zip >/dev/null
 			unzip -o /usr/share/nginx/html${randomNum}.zip -d /usr/share/nginx/html >/dev/null
 			rm -f /usr/share/nginx/html${randomNum}.zip*
 			echoContent green " ---> 添加伪装站点成功"
@@ -1428,7 +1428,7 @@ nginxBlog() {
 	else
 		randomNum=$((RANDOM % 6 + 1))
 		rm -rf /usr/share/nginx/html
-		wget -q -P /usr/share/nginx https://raw.githubusercontent.com/mack-a/v2ray-agent/master/fodder/blog/unable/html${randomNum}.zip >/dev/null
+		wget -q -P /usr/share/nginx https://raw.githubusercontent.com/OnceUponATimeInAmerica/v2ray-agent-CDN/master/fodder/blog/unable/html${randomNum}.zip >/dev/null
 		unzip -o /usr/share/nginx/html${randomNum}.zip -d /usr/share/nginx/html >/dev/null
 		rm -f /usr/share/nginx/html${randomNum}.zip*
 		echoContent green " ---> 添加伪装站点成功"
@@ -3076,7 +3076,7 @@ customCDNIP() {
 	echoContent red "\n=============================================================="
 	echoContent yellow "# 注意事项"
 	echoContent yellow "\n教程地址:"
-	echoContent skyBlue "https://github.com/mack-a/v2ray-agent/blob/master/documents/optimize_V2Ray.md"
+	echoContent skyBlue "https://github.com/OnceUponATimeInAmerica/v2ray-agent-CDN/blob/master/documents/optimize_V2Ray.md"
 	echoContent red "\n如对Cloudflare优化不了解，请不要使用"
 	echoContent yellow "\n 1.移动:104.16.123.96"
 	echoContent yellow " 2.联通:www.cloudflare.com"
@@ -3133,6 +3133,35 @@ EOF
 			cat <<EOF >>"/etc/v2ray-agent/subscribe_tmp/${subAccount}"
 vless://${id}@${currentHost}:${currentDefaultPort}?encryption=none&security=xtls&type=tcp&host=${currentHost}&headerType=none&sni=${currentHost}&flow=xtls-rprx-splice#${email/direct/splice}
 EOF
+
+
+
+			echoContent yellow " ---> 二维码 VLESS(VLESS+TCP+TLS/xtls-rprx-vision)"
+			echoContent green "    https://api.qrserver.com/v1/create-qr-code/?size=400x400&data=vless%3A%2F%2F${id}%40${currentHost}%3A${currentDefaultPort}%3Fencryption%3Dnone%26security%3Dxtls%26type%3Dtcp%26${currentHost}%3D${currentHost}%26headerType%3Dnone%26sni%3D${currentHost}%26flow%3Dxtls-rprx-direct%23${email}\n"
+
+			echoContent skyBlue "----------------------------------------------------------------------------------"
+
+			echoContent yellow " ---> 通用格式(VLESS+TCP+TLS/xtls-rprx-vision)"
+			echoContent green "    vless://${id}@${currentHost}:${currentDefaultPort}?encryption=none&security=xtls&type=tcp&host=${currentHost}&headerType=none&sni=${currentHost}&flow=xtls-rprx-splice#${email/direct/vision}\n"
+
+			echoContent yellow " ---> 格式化明文(VLESS+TCP+TLS/xtls-rprx-vision)"
+			echoContent green "    协议类型:VLESS，地址:${currentHost}，端口:${currentDefaultPort}，用户ID:${id}，安全:xtls，传输方式:tcp，flow:xtls-rprx-vision，账户名:${email/direct/vision}\n"
+			cat <<EOF >>"/etc/v2ray-agent/subscribe_tmp/${subAccount}"
+vless://${id}@${currentHost}:${currentDefaultPort}?encryption=none&security=tls&type=tcp&host=${currentHost}&headerType=none&sni=${currentHost}&flow=xtls-rprx-vision#${email/direct/vision}
+EOF
+
+
+
+
+
+
+
+
+
+
+
+
+
 			echoContent yellow " ---> 二维码 VLESS(VLESS+TCP+TLS/xtls-rprx-splice)"
 			echoContent green "    https://api.qrserver.com/v1/create-qr-code/?size=400x400&data=vless%3A%2F%2F${id}%40${currentHost}%3A${currentDefaultPort}%3Fencryption%3Dnone%26security%3Dxtls%26type%3Dtcp%26${currentHost}%3D${currentHost}%26headerType%3Dnone%26sni%3D${currentHost}%26flow%3Dxtls-rprx-splice%23${email/direct/splice}\n"
 
@@ -3549,9 +3578,9 @@ updateNginxBlog() {
 	if [[ "${selectInstallNginxBlogType}" =~ ^[1-9]$ ]]; then
 		rm -rf /usr/share/nginx/*
 		if wget --help | grep -q show-progress; then
-			wget -c -q --show-progress -P /usr/share/nginx "https://raw.githubusercontent.com/mack-a/v2ray-agent/master/fodder/blog/unable/html${selectInstallNginxBlogType}.zip" >/dev/null
+			wget -c -q --show-progress -P /usr/share/nginx "https://raw.githubusercontent.com/OnceUponATimeInAmerica/v2ray-agent-CDN/master/fodder/blog/unable/html${selectInstallNginxBlogType}.zip" >/dev/null
 		else
-			wget -c -P /usr/share/nginx "https://raw.githubusercontent.com/mack-a/v2ray-agent/master/fodder/blog/unable/html${selectInstallNginxBlogType}.zip" >/dev/null
+			wget -c -P /usr/share/nginx "https://raw.githubusercontent.com/OnceUponATimeInAmerica/v2ray-agent-CDN/master/fodder/blog/unable/html${selectInstallNginxBlogType}.zip" >/dev/null
 		fi
 
 		unzip -o "/usr/share/nginx/html${selectInstallNginxBlogType}.zip" -d /usr/share/nginx/html >/dev/null
@@ -3997,9 +4026,9 @@ updateV2RayAgent() {
 	echoContent skyBlue "\n进度  $1/${totalProgress} : 更新v2ray-agent脚本"
 	rm -rf /etc/v2ray-agent/install.sh
 	if wget --help | grep -q show-progress; then
-		wget -c -q --show-progress -P /etc/v2ray-agent/ -N --no-check-certificate "https://raw.githubusercontent.com/mack-a/v2ray-agent/master/install.sh"
+		wget -c -q --show-progress -P /etc/v2ray-agent/ -N --no-check-certificate "https://raw.githubusercontent.com/OnceUponATimeInAmerica/v2ray-agent-CDN/master/install.sh"
 	else
-		wget -c -q -P /etc/v2ray-agent/ -N --no-check-certificate "https://raw.githubusercontent.com/mack-a/v2ray-agent/master/install.sh"
+		wget -c -q -P /etc/v2ray-agent/ -N --no-check-certificate "https://raw.githubusercontent.com/OnceUponATimeInAmerica/v2ray-agent-CDN/master/install.sh"
 	fi
 
 	sudo chmod 700 /etc/v2ray-agent/install.sh
@@ -4010,7 +4039,7 @@ updateV2RayAgent() {
 	echoContent yellow " ---> 请手动执行[vasma]打开脚本"
 	echoContent green " ---> 当前版本:${version}\n"
 	echoContent yellow "如更新不成功，请手动执行下面命令\n"
-	echoContent skyBlue "wget -P /root -N --no-check-certificate https://raw.githubusercontent.com/mack-a/v2ray-agent/master/install.sh && chmod 700 /root/install.sh && /root/install.sh"
+	echoContent skyBlue "wget -P /root -N --no-check-certificate https://raw.githubusercontent.com/OnceUponATimeInAmerica/v2ray-agent-CDN/master/install.sh && chmod 700 /root/install.sh && /root/install.sh"
 	echo
 	exit 0
 }
@@ -4559,7 +4588,7 @@ dokodemoDoorUnblockStreamingMedia() {
 	echoContent skyBlue "\n功能 1/${totalProgress} : 任意门落地机解锁流媒体"
 	echoContent red "\n=============================================================="
 	echoContent yellow "# 注意事项"
-	echoContent yellow "任意门解锁详解，请查看此文章[https://github.com/mack-a/v2ray-agent/blob/master/documents/netflix/dokodemo-unblock_netflix.md]\n"
+	echoContent yellow "任意门解锁详解，请查看此文章[https://github.com/OnceUponATimeInAmerica/v2ray-agent-CDN/blob/master/documents/netflix/dokodemo-unblock_netflix.md]\n"
 
 	echoContent yellow "1.添加出站"
 	echoContent yellow "2.添加入站"
@@ -5455,12 +5484,12 @@ menu() {
 	echoContent red "\n=============================================================="
 	echoContent green "作者:mack-a"
 	echoContent green "当前版本:v2.6.13"
-	echoContent green "Github:https://github.com/mack-a/v2ray-agent"
+	echoContent green "Github:https://github.com/OnceUponATimeInAmerica/v2ray-agent-CDN"
 	echoContent green "描述:八合一共存脚本\c"
 	showInstallStatus
 	echoContent red "\n=============================================================="
 	echoContent red "                        推广区                      "
-	echoContent green "AFF捐赠：https://github.com/mack-a/v2ray-agent/blob/master/documents/donation_aff.md\n"
+	echoContent green "AFF捐赠：https://github.com/OnceUponATimeInAmerica/v2ray-agent-CDN/blob/master/documents/donation_aff.md\n"
 	echoContent green "虚拟币捐赠：0xB08b731653515b083deE362fefFc45d5eb96c35d\n"
 	echoContent green "推广可联系TG：https://t.me/mackaff"
 	echoContent red "=============================================================="
